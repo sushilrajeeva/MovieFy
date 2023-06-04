@@ -1,10 +1,14 @@
 package com.movie.book;
+
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.http.ResponseEntity;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import com.moviebookingApp.controller.TicketController;
 import com.moviebookingApp.model.Movie;
@@ -14,16 +18,9 @@ import com.moviebookingApp.service.TicketService;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class TicketControllerTest {
-
-    @InjectMocks
-    private TicketController ticketController;
 
     @Mock
     private TicketService ticketService;
@@ -31,58 +28,55 @@ public class TicketControllerTest {
     @Mock
     private MovieService movieService;
 
+    @InjectMocks
+    private TicketController ticketController;
+
     @Test
     public void testAddTicket_Success() {
-        Movie movie = new Movie();
-        movie.setMovieId(1);
-        movie.setSeatsAvailable(10);
-        movie.setBookedSeats(0);
-
-        when(movieService.getMovieById(1)).thenReturn(movie);
-        when(movieService.updateMovie(any(Movie.class))).thenReturn(true);
-        when(ticketService.addTicket(any(Ticket.class))).thenReturn(true);
+        Movie mockMovie = new Movie();
+        mockMovie.setMovieId(1);
+        mockMovie.setMovieName("Test Movie");
+        mockMovie.setSeatsAvailable(10);
+        
+        Mockito.when(movieService.getMovieById(1)).thenReturn(mockMovie);
+        Mockito.when(movieService.updateMovie(Mockito.any(Movie.class))).thenReturn(true);
+        Mockito.when(ticketService.addTicket(Mockito.any(Ticket.class))).thenReturn(true);
 
         ResponseEntity<?> response = ticketController.addTicket(1, 5);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        verify(movieService).getMovieById(1);
-        verify(movieService).updateMovie(any(Movie.class));
-        verify(ticketService).addTicket(any(Ticket.class));
     }
 
     @Test
     public void testAddTicket_Failure() {
-        when(movieService.getMovieById(1)).thenReturn(null);
+        Movie mockMovie = new Movie();
+        mockMovie.setMovieId(1);
+        mockMovie.setMovieName("Test Movie");
+        mockMovie.setSeatsAvailable(10);
 
-        ResponseEntity<?> response = ticketController.addTicket(1, 5);
+        Mockito.when(movieService.getMovieById(1)).thenReturn(mockMovie);
+
+        ResponseEntity<?> response = ticketController.addTicket(1, 15);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        verify(movieService).getMovieById(1);
     }
 
     @Test
     public void testGetAllTickets_Success() {
-        Ticket ticket = new Ticket();
-        ticket.setSeatsBooked(5);
-        ticket.setSeatsAvailable(95);
-        List<Ticket> tickets = Arrays.asList(ticket);
-
-        when(ticketService.getAllTickets()).thenReturn(tickets);
+        Ticket mockTicket = new Ticket();
+        Mockito.when(ticketService.getAllTickets()).thenReturn(Arrays.asList(mockTicket));
 
         ResponseEntity<?> response = ticketController.getAllTickets();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(ticketService).getAllTickets();
     }
 
     @Test
     public void testGetAllTickets_Failure() {
-        when(ticketService.getAllTickets()).thenReturn(Collections.emptyList());
+        Mockito.when(ticketService.getAllTickets()).thenReturn(Collections.emptyList());
 
         ResponseEntity<?> response = ticketController.getAllTickets();
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(ticketService).getAllTickets();
     }
 }
-

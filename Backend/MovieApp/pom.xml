@@ -94,7 +94,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-		<finalName>com-moviebookingapp-docker</finalName>
+		
 	</build>
 
 </project>

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.moviebookingAuth.authorizationService.model.ForgetPassword;
 import com.moviebookingAuth.authorizationService.model.Role;
 import com.moviebookingAuth.authorizationService.model.User;
 import com.moviebookingAuth.authorizationService.repository.RoleDao;
@@ -40,29 +41,28 @@ public class UserService {
 		roleDao.save(userRole);
 		
 		User adminUser=new User();
-		adminUser.setUserFirstName("admin");
-		adminUser.setUserLastName("admin");
+		adminUser.setFullName("admin");
 		adminUser.setUserName("admin123");
 		adminUser.setEmail("admin@gmail.com");
 		adminUser.setUserPassword(getEncodedPassword("admin@pass"));
-		adminUser.setUserConfirmedPassword(getEncodedPassword("admin@pass"));
-		adminUser.setContactNumber("9999999999");
 		Set<Role> adminRoles=new HashSet<>();
+		adminUser.setSecretQuestion("What is your nickname");
+		adminUser.setSecretAnswer("admin");
 		adminRoles.add(adminRole);
 		adminUser.setRole(adminRoles);
 		userdao.save(adminUser);
 		
 	User user=new User();
-	user.setUserFirstName("mohit");
-	user.setUserLastName("sahu");
-	user.setUserName("mohit123");
-	user.setEmail("mohit@gmail.com");
-	user.setUserPassword(getEncodedPassword("mohit@123"));
-	user.setUserConfirmedPassword(getEncodedPassword("mohit@123"));
-	user.setContactNumber("9876543210");
+	user.setFullName("Vishal");
+	user.setUserName("vishalsb1");
+	user.setEmail("vishal@gmail.com");
+	user.setUserPassword(getEncodedPassword("vish@123"));
 	Set<Role> userRoles=new HashSet<>();
 	userRoles.add(userRole);
 	user.setRole(userRoles);
+	user.setSecretQuestion("What is your nickname");
+	user.setSecretAnswer("Vishu");
+	
 	userdao.save(user);
 //	
 		
@@ -73,25 +73,69 @@ public class UserService {
         Role role = roleDao.findById("User").get();
         Set<Role> userRoles = new HashSet<>();
         userRoles.add(role);
-        String upass=user.getUserPassword();
-        System.out.println("User pass = " + upass);
-        String uConfpass=user.getUserConfirmedPassword();
-
-        System.out.println("User conf pass = " + uConfpass);
-        if(upass.equals(uConfpass)) {
         user.setRole(userRoles);
         user.setUserPassword(getEncodedPassword(user.getUserPassword()));
-        user.setUserConfirmedPassword(getEncodedPassword(user.getUserConfirmedPassword()));
-         userdao.save(user);
-         return HttpStatus.OK;
+        User savedUser =  userdao.save(user);
+        
+        if(savedUser!=null) {
+        	return HttpStatus.OK;
         }
-        else return HttpStatus.BAD_REQUEST;
+       
+        return HttpStatus.BAD_REQUEST;
 
        
     }
 	
+	public String userNameValidator(String email, String password) {
+	    User user = userdao.findUserByEmail(email);
+	    
+	    if(user != null) {
+	        if(passwordEncoder.matches(password, user.getUserPassword())) {
+	            System.out.println("Passwords Matched!!");
+	            return user.getUserName();
+	        } else {
+	            System.out.println("Password didn't match!!");
+	        }
+	    } else {
+	        System.out.println("No user found!!");
+	    }
+
+	    return null;
+	}
+	
+	public HttpStatus updateUserPassword(ForgetPassword forgetPassword) {
+		
+		User user = userdao.findByUserName(forgetPassword.getUserName());
+		
+		if(user != null) {
+			if(user.getSecretQuestion().equals(forgetPassword.getSecretQuestion())) {
+				if(user.getSecretAnswer().equals(forgetPassword.getSecretAnswer())) {
+					user.setUserPassword(getEncodedPassword(forgetPassword.getNewPassword()));
+					System.out.println("Password Updated!!");
+					return HttpStatus.ACCEPTED;
+				}else {
+					System.out.println("Secret Answers didn't match!!");
+				}
+			}else {
+				System.out.println("Secret Questions didn't match!!");
+			}
+		}else {
+			System.out.println("User not found with the given userName");
+		}
+		
+	
+		
+		return HttpStatus.NOT_MODIFIED;
+	}
+
+	
 	public String getEncodedPassword(String password) {
         return passwordEncoder.encode(password);
     }
+	
+	public boolean isPasswordValid(String rawPassword, String hashedPassword) {
+	    return passwordEncoder.matches(rawPassword, hashedPassword);
+	}
+
 }
 

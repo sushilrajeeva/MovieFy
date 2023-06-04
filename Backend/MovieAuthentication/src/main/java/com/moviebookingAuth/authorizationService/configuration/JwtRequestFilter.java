@@ -71,7 +71,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	        if (requestURI.endsWith("/authenticate")) {
 	            filterChain.doFilter(request, response);
 	            
-	        }else {
+	        }else if(requestURI.contains("swagger-ui")){
+	        	filterChain.doFilter(request, response);
+	        }
+	        else {
+	        	
 	        	if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
 		            jwtToken = requestTokenHeader.substring(7);
 		            try {

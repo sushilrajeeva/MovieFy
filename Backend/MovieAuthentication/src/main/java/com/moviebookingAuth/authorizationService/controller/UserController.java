@@ -13,11 +13,13 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.moviebookingAuth.authorizationService.model.ForgetPassword;
 import com.moviebookingAuth.authorizationService.model.User;
 import com.moviebookingAuth.authorizationService.service.UserService;
 
@@ -44,6 +46,31 @@ public class UserController {
 	@PreAuthorize("hasRole('User')")
 	public String forUser() {
 		return "This String is only accessable to user";
+	}
+	
+	@GetMapping({"/username/forget/{email}/{password}"})
+	public String forgotUsername(@PathVariable("email") String email, @PathVariable("password") String password) {
+      
+		System.out.println("Forgot user name controller method is called");
+		System.out.println("Email : " + email + " -  Password : " + password);
+//		return userService.registerNewUser(user);
+		return userService.userNameValidator(email, password);
+    
+	}
+	
+	@PostMapping({"/user/forgetpassword"})
+	public HttpStatus forgotUserPassword(@RequestBody ForgetPassword forgetPassword) {
+      
+		System.out.println("Forgot user name controller method is called");
+		System.out.println("userName : " + forgetPassword.getUserName());
+		System.out.println("Security Question : " + forgetPassword.getSecretQuestion());
+		System.out.println("Security Answer : " + forgetPassword.getSecretAnswer());
+		System.out.println("New Password : " + forgetPassword.getNewPassword());
+//		return userService.registerNewUser(user);
+		//return userService.userNameValidator(email, password);
+		
+		return userService.updateUserPassword(forgetPassword);
+    
 	}
 	
 	

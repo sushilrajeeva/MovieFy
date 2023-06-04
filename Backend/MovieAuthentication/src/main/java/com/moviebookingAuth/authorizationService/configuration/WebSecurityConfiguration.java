@@ -40,8 +40,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors();
         httpSecurity.csrf().disable()
-                .authorizeRequests().antMatchers("/authenticate", "/registerNewUser","/getAllProducts","/getProductDetailById/{productId}").permitAll()
+                .authorizeRequests()
+                .antMatchers("/authenticate", "/registerNewUser","/username/forget/{email}/{password}","/user/forgetpassword").permitAll()
                 .antMatchers(HttpHeaders.ALLOW).permitAll()
+                .antMatchers("/swagger-ui.html", "/v2/api-docs", "/webjars/**", "/swagger-resources/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -51,6 +53,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -17,7 +17,7 @@ import static springfox.documentation.builders.PathSelectors.regex;
 		public Docket productApi() {
 			return new Docket(DocumentationType.SWAGGER_2)
 					.select()
-					.apis(RequestHandlerSelectors.basePackage("com.movie.book.controller"))
+					.apis(RequestHandlerSelectors.basePackage("com.moviebookingApp.controller"))
 					.paths(regex("/.*")).build();
 		}
 

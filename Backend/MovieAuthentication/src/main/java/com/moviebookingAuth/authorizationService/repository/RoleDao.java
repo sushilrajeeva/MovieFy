@@ -9,6 +9,6 @@ import com.moviebookingAuth.authorizationService.model.Role;
 
 @Repository
 public interface RoleDao extends CrudRepository<Role, String>{
-
+//I can add roles to my db.... and in future from front end if i want user to select roles only from a specified type i can refer this table for valid roles
 }
 

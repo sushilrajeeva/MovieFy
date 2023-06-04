@@ -17,9 +17,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 
-
-
-
 @Entity
 @Table(name="Users")
 public class User {
@@ -28,10 +25,8 @@ public class User {
 	private String userName;
 	
 	@NotBlank(message="This field is mandatory")
-	private String userFirstName;
+	private String fullName;
 	
-	@NotBlank(message="This field is mandatory")
-	private String userLastName;
 	
 	@NotBlank
 	@Column(unique=true)
@@ -41,11 +36,7 @@ public class User {
 	@NotBlank
     private String userPassword;
 	
-	@NotBlank
-	private String userConfirmedPassword;
 	
-	//@Size(max=10)
-	private String contactNumber;
 	
 	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinTable(name="USER_ROLE",
@@ -55,83 +46,113 @@ public class User {
 	}
 	)
 	private Set<Role> role;
+	
+	@NotBlank
+    private String secretQuestion;
+	
+	@NotBlank
+    private String secretAnswer;
 
-	public User(String userName, String userFirstName, String userLastName, String email, String userPassword,
-			String userConfirmedPassword, String contactNumber, Set<Role> role) {
+	
+
+	public User(String userName, @NotBlank(message = "This field is mandatory") String fullName,
+			@NotBlank @Email(message = "Please Enter valid Email Address") String email, @NotBlank String userPassword,
+			Set<Role> role, @NotBlank String secretQuestion, @NotBlank String secretAnswer) {
 		super();
 		this.userName = userName;
-		this.userFirstName = userFirstName;
-		this.userLastName = userLastName;
+		this.fullName = fullName;
 		this.email = email;
 		this.userPassword = userPassword;
-		this.userConfirmedPassword = userConfirmedPassword;
-		this.contactNumber = contactNumber;
 		this.role = role;
+		this.secretQuestion = secretQuestion;
+		this.secretAnswer = secretAnswer;
 	}
+
+
 
 	public String getUserName() {
 		return userName;
 	}
 
+
+
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
 
-	public String getUserFirstName() {
-		return userFirstName;
+
+
+	public String getFullName() {
+		return fullName;
 	}
 
-	public void setUserFirstName(String userFirstName) {
-		this.userFirstName = userFirstName;
+
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
-	public String getUserLastName() {
-		return userLastName;
-	}
 
-	public void setUserLastName(String userLastName) {
-		this.userLastName = userLastName;
-	}
 
 	public String getEmail() {
 		return email;
 	}
 
+
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+
 
 	public String getUserPassword() {
 		return userPassword;
 	}
 
+
+
 	public void setUserPassword(String userPassword) {
 		this.userPassword = userPassword;
 	}
 
-	public String getUserConfirmedPassword() {
-		return userConfirmedPassword;
-	}
 
-	public void setUserConfirmedPassword(String userConfirmedPassword) {
-		this.userConfirmedPassword = userConfirmedPassword;
-	}
-
-	public String getContactNumber() {
-		return contactNumber;
-	}
-
-	public void setContactNumber(String contactNumber) {
-		this.contactNumber = contactNumber;
-	}
 
 	public Set<Role> getRole() {
 		return role;
 	}
 
+
+
 	public void setRole(Set<Role> role) {
 		this.role = role;
 	}
+
+
+
+	public String getSecretQuestion() {
+		return secretQuestion;
+	}
+
+
+
+	public void setSecretQuestion(String secretQuestion) {
+		this.secretQuestion = secretQuestion;
+	}
+
+
+
+	public String getSecretAnswer() {
+		return secretAnswer;
+	}
+
+
+
+	public void setSecretAnswer(String secretAnswer) {
+		this.secretAnswer = secretAnswer;
+	}
+
+
 
 	public User() {
 		super();

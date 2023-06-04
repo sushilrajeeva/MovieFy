@@ -2,12 +2,23 @@ package com.moviebookingAuth.authorizationService.repository;
 
 
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import com.moviebookingAuth.authorizationService.model.User;
 
 
 
-public interface UserDao extends CrudRepository<User, String>{
+public interface UserDao extends JpaRepository<User, String>{
+	
+	@Query("SELECT u FROM User u WHERE u.email = :email")
+	User findUserByEmail(@Param("email") String email);
+	
+	@Query("SELECT u FROM User u WHERE u.userName = :userName")
+	User findByUserName(@Param("userName") String userName);
+	
+	
 
 }

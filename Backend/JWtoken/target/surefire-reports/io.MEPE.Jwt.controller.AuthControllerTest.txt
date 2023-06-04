@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: io.MEPE.Jwt.controller.AuthControllerTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 0.823 s <<< FAILURE! - in io.MEPE.Jwt.controller.AuthControllerTest
+loginTest  Time elapsed: 0.213 s  <<< ERROR!
+java.lang.IllegalArgumentException: The Secret cannot be null
+	at io.MEPE.Jwt.controller.AuthControllerTest.loginTest(AuthControllerTest.java:65)
+
+AuthTest  Time elapsed: 0 s  <<< ERROR!
+java.lang.IllegalArgumentException: The Secret cannot be null
+	at io.MEPE.Jwt.controller.AuthControllerTest.AuthTest(AuthControllerTest.java:46)
+

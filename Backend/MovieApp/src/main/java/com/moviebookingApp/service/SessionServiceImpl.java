@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.moviebookingApp.model.SessionDTO;
-import com.moviebookingApp.repository.MovieRepository;
+
 import com.moviebookingApp.repository.SessionRepository;
 
 @Service

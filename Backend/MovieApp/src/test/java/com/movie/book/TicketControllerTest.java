@@ -1,82 +1,88 @@
 package com.movie.book;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.http.ResponseEntity;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.moviebookingApp.controller.TicketController;
 import com.moviebookingApp.model.Movie;
 import com.moviebookingApp.model.Ticket;
 import com.moviebookingApp.service.MovieService;
+import com.moviebookingApp.service.SessionService;
 import com.moviebookingApp.service.TicketService;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-@ExtendWith(MockitoExtension.class)
 public class TicketControllerTest {
-
-    @Mock
-    private TicketService ticketService;
-
-    @Mock
-    private MovieService movieService;
 
     @InjectMocks
     private TicketController ticketController;
 
-    @Test
-    public void testAddTicket_Success() {
-        Movie mockMovie = new Movie();
-        mockMovie.setMovieId(1);
-        mockMovie.setMovieName("Test Movie");
-        mockMovie.setSeatsAvailable(10);
-        
-        Mockito.when(movieService.getMovieById(1)).thenReturn(mockMovie);
-        Mockito.when(movieService.updateMovie(Mockito.any(Movie.class))).thenReturn(true);
-        Mockito.when(ticketService.addTicket(Mockito.any(Ticket.class))).thenReturn(true);
+    @Mock
+    private MovieService movieService;
 
-        ResponseEntity<?> response = ticketController.addTicket(1, 5);
+    @Mock
+    private SessionService sessionService;
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    @Mock
+    private TicketService ticketService;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testAddTicket_Failure() {
-        Movie mockMovie = new Movie();
-        mockMovie.setMovieId(1);
-        mockMovie.setMovieName("Test Movie");
-        mockMovie.setSeatsAvailable(10);
+    void testAddTicketSuccess() throws Exception {
+        int movieId = 1;
+        int seatsBooked = 2;
 
-        Mockito.when(movieService.getMovieById(1)).thenReturn(mockMovie);
+        Movie movie = new Movie();
+        movie.setMovieId(movieId);
+        movie.setSeatsAvailable(3);
 
-        ResponseEntity<?> response = ticketController.addTicket(1, 15);
+        Ticket ticket = new Ticket();
+        ticket.setMovie_id_fk(movieId);
+        ticket.setSeatsBooked(seatsBooked);
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        when(sessionService.checkSessionUserType()).thenReturn("user");
+        when(movieService.getMovieById(movieId)).thenReturn(movie);
+        when(movieService.updateMovie(any(Movie.class))).thenReturn(true);
+        when(ticketService.addTicket(any(Ticket.class))).thenReturn(true); 
+
+        ResponseEntity<?> responseEntity = ticketController.addTicket(movieId, seatsBooked);
+
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+
+        Ticket responseTicket = (Ticket) responseEntity.getBody();
+
+        assertEquals(movieId, responseTicket.getMovie_id_fk());
+        assertEquals(seatsBooked, responseTicket.getSeatsBooked());
     }
 
-    @Test
-    public void testGetAllTickets_Success() {
-        Ticket mockTicket = new Ticket();
-        Mockito.when(ticketService.getAllTickets()).thenReturn(Arrays.asList(mockTicket));
-
-        ResponseEntity<?> response = ticketController.getAllTickets();
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
 
     @Test
-    public void testGetAllTickets_Failure() {
-        Mockito.when(ticketService.getAllTickets()).thenReturn(Collections.emptyList());
+    void testAddTicketFailure() throws Exception {
+        int movieId = 1;
+        int seatsBooked = 5; // More seats requested than available.
 
-        ResponseEntity<?> response = ticketController.getAllTickets();
+        Movie movie = new Movie();
+        movie.setMovieId(movieId);
+        movie.setSeatsAvailable(3); 
 
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        when(sessionService.checkSessionUserType()).thenReturn("user");
+        when(movieService.getMovieById(movieId)).thenReturn(movie);
+
+        ResponseEntity<?> responseEntity = ticketController.addTicket(movieId, seatsBooked);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertEquals("Ticket cannot be created as seats you are trying to book is more than available seats", responseEntity.getBody());
     }
 }

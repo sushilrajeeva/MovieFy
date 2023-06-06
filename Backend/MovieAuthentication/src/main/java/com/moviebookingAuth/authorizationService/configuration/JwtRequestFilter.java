@@ -1,9 +1,7 @@
 package com.moviebookingAuth.authorizationService.configuration;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.Enumeration;
 
+import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +42,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	        
 
 	        HttpServletRequest httpReq = (HttpServletRequest) request;
-	        HttpServletResponse httpRes = (HttpServletResponse) response;
+	        @SuppressWarnings("unused")
+			HttpServletResponse httpRes = (HttpServletResponse) response;
 
 	        // Print out the request URL, Method and Headers
 	        System.out.println("Request URL: " + httpReq.getRequestURL());

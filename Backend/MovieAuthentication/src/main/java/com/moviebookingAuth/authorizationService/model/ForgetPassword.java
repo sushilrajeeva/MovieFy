@@ -1,6 +1,5 @@
 package com.moviebookingAuth.authorizationService.model;
 
-import javax.validation.constraints.NotBlank;
 
 public class ForgetPassword {
 	

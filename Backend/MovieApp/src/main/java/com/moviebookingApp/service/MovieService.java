@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.moviebookingApp.exceptions.DuplicateMovieIdExceptions;
 import com.moviebookingApp.exceptions.DuplicateMovieNameException;
-import com.moviebookingApp.exceptions.MovieNotAvailableException;
 import com.moviebookingApp.model.Movie;
 
 public interface MovieService {

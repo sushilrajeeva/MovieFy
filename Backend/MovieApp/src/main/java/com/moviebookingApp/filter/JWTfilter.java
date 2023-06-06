@@ -20,6 +20,7 @@ public class JWTfilter extends GenericFilterBean {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest httpReq = (HttpServletRequest) request;
+		@SuppressWarnings("unused")
 		HttpServletResponse httpRes = (HttpServletResponse) response;
 
 		String authHeader = httpReq.getHeader("authorization");

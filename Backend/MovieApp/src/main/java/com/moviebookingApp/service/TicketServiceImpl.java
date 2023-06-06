@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.moviebookingApp.model.Movie;
+
 import com.moviebookingApp.model.Ticket;
 import com.moviebookingApp.repository.TicketRepo;
 

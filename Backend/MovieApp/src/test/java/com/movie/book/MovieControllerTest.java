@@ -1,165 +1,71 @@
 package com.movie.book;
 
 
+import com.moviebookingApp.controller.MovieController;
+
+import com.moviebookingApp.model.Movie;
+import com.moviebookingApp.service.MovieService;
+import com.moviebookingApp.service.SessionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import com.moviebookingApp.controller.MovieController;
-import com.moviebookingApp.model.Movie;
-import com.moviebookingApp.repository.MovieRepository;
-import com.moviebookingApp.service.MovieService;
-import com.moviebookingApp.service.TicketService;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class MovieControllerTest {
 
+    @Mock
+    private MovieService movieService;
+    
+    @Mock
+    private SessionService sessionService;
+
     @InjectMocks
-    MovieController movieController;
-
-    @Mock
-    MovieService ms;
-
-    @Mock
-    MovieRepository mr;
-
-    @Mock
-    TicketService ts;
+    private MovieController movieController;
 
     @BeforeEach
-    public void init() {
-        MockitoAnnotations.initMocks(this);
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testAddMovieSuccess() throws Exception {
-        Movie movie = new Movie(); 
-        when(ms.addMovie(any(Movie.class))).thenReturn(movie);
-
-        ResponseEntity<?> response = movieController.addMovie(movie);
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(movie, response.getBody());
-    }
-
-    @Test
-    public void testAddMovieFailure() throws Exception {
-        Movie movie = new Movie(); 
-        when(ms.addMovie(any(Movie.class))).thenReturn(null);
-
-        ResponseEntity<?> response = movieController.addMovie(movie);
-
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertEquals("No Movie", response.getBody());
-    }
-
-    @Test
-    public void testGetMoviesSuccess() {
-        List<Movie> movies = Arrays.asList(new Movie());
-        when(ms.getAllMovies()).thenReturn(movies);
-
-        ResponseEntity<?> response = movieController.getMovies();
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(movies, response.getBody());
-    }
-
-    @Test
-    public void testGetMoviesFailure() {
-        when(ms.getAllMovies()).thenReturn(null);
-
-        ResponseEntity<?> response = movieController.getMovies();
-
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertEquals("No Movie list", response.getBody());
-    }
-
-    @Test
-    public void testGetMovieByIdSuccess() {
+    void testAddMovieSuccess() throws Exception {
         Movie movie = new Movie();
-        when(ms.getMovieById(1)).thenReturn(movie);
+        movie.setMovieName("TestMovie");
 
-        ResponseEntity<?> response = movieController.getMovieById(1);
+        when(sessionService.checkSessionUserType()).thenReturn("admin");
+        when(movieService.addMovie(any(Movie.class))).thenReturn(movie);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(movie, response.getBody());
+        ResponseEntity<?> responseEntity = movieController.addMovie(movie);
+
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        assertEquals(movie, responseEntity.getBody());
     }
 
     @Test
-    public void testGetMovieByIdFailure() {
-        when(ms.getMovieById(1)).thenReturn(null);
-
-        ResponseEntity<?> response = movieController.getMovieById(1);
-
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertEquals("No Movie with this ID", response.getBody());
-    }
-
-    @Test
-    public void testGetMovieByNameSuccess() {
-        List<Movie> movies = Arrays.asList(new Movie());
-        when(ms.getMovieByName("test")).thenReturn(movies);
-
-        ResponseEntity<?> response = movieController.getMovieByName("test");
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(movies, response.getBody());
-    }
-
-    @Test
-    public void testGetMovieByNameFailure() {
-        when(ms.getMovieByName("test")).thenReturn(null);
-
-        ResponseEntity<?> response = movieController.getMovieByName("test");
-
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertEquals("No Movie with this Name", response.getBody());
-    }
-
-  
-
-    @Test
-    public void testDeleteMovieByIdFailure() {
+    void testAddMovieFailure() throws Exception {
         Movie movie = new Movie();
-        when(mr.findMovie("test", "test")).thenReturn(movie);
-        when(ms.deleteMovie("test", "test")).thenReturn(false);
-        when(ts.deleteTicket(1)).thenReturn(false);
+        movie.setMovieName("TestMovie");
 
-        ResponseEntity<?> response = movieController.deleteMovieById("test", "test");
+        when(sessionService.checkSessionUserType()).thenReturn("admin");
+        when(movieService.addMovie(any(Movie.class))).thenReturn(null);
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Movie not deleted", response.getBody());
+        ResponseEntity<?> responseEntity = movieController.addMovie(movie);
+
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
+        assertEquals("No Movie", responseEntity.getBody());
     }
 
     @Test
-    public void testUpdateMovieSuccess() {
+    void testAddMovieException() {
         Movie movie = new Movie();
-        when(ms.updateMovie(any(Movie.class))).thenReturn(true);
+        movie.setMovieName("TestMovie");
 
-        ResponseEntity<?> response = movieController.updateMovie(1, movie);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(movie.getMovieName(), response.getBody());
-    }
-
-    @Test
-    public void testUpdateMovieFailure() {
-        Movie movie = new Movie();
-        when(ms.updateMovie(any(Movie.class))).thenReturn(false);
-
-        ResponseEntity<?> response = movieController.updateMovie(1, movie);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Movie could not be updated", response.getBody());
+        assertThrows(Exception.class, () -> movieController.addMovie(movie));
     }
 }

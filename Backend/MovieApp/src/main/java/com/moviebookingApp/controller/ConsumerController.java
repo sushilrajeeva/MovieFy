@@ -1,6 +1,6 @@
 package com.moviebookingApp.controller;
 
-import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -18,7 +18,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.moviebookingApp.model.JwtResponse;
-import com.moviebookingApp.model.Session;
 import com.moviebookingApp.model.SessionDTO;
 import com.moviebookingApp.model.UserDTO;
 import com.moviebookingApp.repository.SessionRepository;

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.moviebookingApp.exceptions.DuplicateMovieNameException;
-import com.moviebookingApp.exceptions.MovieNotAvailableException;
 import com.moviebookingApp.model.Movie;
 import com.moviebookingApp.repository.MovieRepository;
 

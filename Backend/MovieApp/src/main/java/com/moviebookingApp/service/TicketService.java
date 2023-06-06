@@ -2,7 +2,7 @@ package com.moviebookingApp.service;
 
 import java.util.List;
 
-import com.moviebookingApp.model.Movie;
+
 import com.moviebookingApp.model.Ticket;
 
 public interface TicketService {

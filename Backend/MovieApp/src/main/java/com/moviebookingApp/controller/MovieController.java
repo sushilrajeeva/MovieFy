@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.moviebookingApp.exceptions.DuplicateMovieIdExceptions;
 import com.moviebookingApp.exceptions.DuplicateMovieNameException;
 import com.moviebookingApp.model.Movie;
-import com.moviebookingApp.model.SessionDTO;
+
 import com.moviebookingApp.model.Ticket;
 import com.moviebookingApp.repository.MovieRepository;
 import com.moviebookingApp.service.MovieService;
@@ -77,27 +77,7 @@ public class MovieController {
 		return new ResponseEntity<String>("No Movie", HttpStatus.NO_CONTENT);
 	}
 	
-	public void ForAdmin() throws Exception {
-		String sessionUserType =  sessionService.checkSessionUserType();
-		
-		System.out.println("LoggedSessionUserType is : " + sessionUserType);
-		
-		if(!sessionUserType.equals("admin")) {
-			System.out.println("Oops !! This method is only for admin!!");
-			throw new Exception("This Method is only reserved for admin usertype!!");
-		}
-	}
 	
-	public void ForUser() throws Exception {
-		String sessionUserType =  sessionService.checkSessionUserType();
-		
-		System.out.println("LoggedSessionUserType is : " + sessionUserType);
-		
-		if(!sessionUserType.equals("user")) {
-			System.out.println("Oops !! This method is only for user type!!");
-			throw new Exception("This Method is only reserved for user type users!!");
-		}
-	}
 	
 	@GetMapping("/getAllMovies")
 	public ResponseEntity<?> getMovies() throws Exception 
@@ -188,6 +168,28 @@ public class MovieController {
 	  }
 		log.error("Failed to update movie ID: {}", mid);
 	  return new ResponseEntity<String>("Movie could not be updated", HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	public void ForAdmin() throws Exception {
+		String sessionUserType =  sessionService.checkSessionUserType();
+		
+		System.out.println("LoggedSessionUserType is : " + sessionUserType);
+		
+		if(!sessionUserType.equals("admin")) {
+			System.out.println("Oops !! This method is only for admin!!");
+			throw new Exception("This Method is only reserved for admin usertype!!");
+		}
+	}
+	
+	public void ForUser() throws Exception {
+		String sessionUserType =  sessionService.checkSessionUserType();
+		
+		System.out.println("LoggedSessionUserType is : " + sessionUserType);
+		
+		if(!sessionUserType.equals("user")) {
+			System.out.println("Oops !! This method is only for user type!!");
+			throw new Exception("This Method is only reserved for user type users!!");
+		}
 	}
 
 }

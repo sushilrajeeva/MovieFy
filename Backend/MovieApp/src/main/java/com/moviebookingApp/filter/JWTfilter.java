@@ -32,6 +32,11 @@ public class JWTfilter extends GenericFilterBean {
 		    chain.doFilter(request, response);
 		    return;
 		}
+		
+		if (requestURI.endsWith("/api/v1.0/logout")) {
+		    chain.doFilter(request, response);
+		    return;
+		}
 
 		if (authHeader == null || !authHeader.startsWith("Bearer")) {
 			throw new ServletException("Missing or invalid authentication header");
@@ -43,6 +48,7 @@ public class JWTfilter extends GenericFilterBean {
 		String jwtToken = authHeader.substring(7);
 		System.out.println("jwt token : " + jwtToken);
 		Claims claims = Jwts.parser().setSigningKey("learn_programming_yourself").parseClaimsJws(jwtToken).getBody();
+		System.out.println("Claims "+ claims.get(jwtToken));
 
 		httpReq.setAttribute("username", claims);
 		chain.doFilter(request, response);

@@ -111,6 +111,7 @@ public class UserService {
 			if(user.getSecretQuestion().equals(forgetPassword.getSecretQuestion())) {
 				if(user.getSecretAnswer().equals(forgetPassword.getSecretAnswer())) {
 					user.setUserPassword(getEncodedPassword(forgetPassword.getNewPassword()));
+					userdao.save(user);
 					System.out.println("Password Updated!!");
 					return HttpStatus.ACCEPTED;
 				}else {

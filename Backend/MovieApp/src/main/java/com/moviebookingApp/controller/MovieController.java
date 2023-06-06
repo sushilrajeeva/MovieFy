@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.moviebookingApp.exceptions.DuplicateMovieIdExceptions;
 import com.moviebookingApp.exceptions.DuplicateMovieNameException;
 import com.moviebookingApp.model.Movie;
+import com.moviebookingApp.model.SessionDTO;
 import com.moviebookingApp.model.Ticket;
 import com.moviebookingApp.repository.MovieRepository;
 import com.moviebookingApp.service.MovieService;
+import com.moviebookingApp.service.SessionService;
 import com.moviebookingApp.service.TicketService;
 
 //import com.moviebookingapp.kafka.Producer;
@@ -44,15 +46,23 @@ public class MovieController {
 	@Autowired
 	private TicketService ts;
 	
+	@Autowired
+	private SessionService sessionService;
+	
 //	@Autowired
 //	Producer producer;
 	 Logger log = LoggerFactory.getLogger(MovieController.class);
 	
 	@PostMapping("/admin/addMovie")
-	public ResponseEntity<?> addMovie(@RequestBody Movie movie) throws DuplicateMovieNameException, DuplicateMovieIdExceptions
+	public ResponseEntity<?> addMovie(@RequestBody Movie movie) throws DuplicateMovieNameException, DuplicateMovieIdExceptions, Exception
 	{
 		log.info("Attempting to add new movie: {}", movie.getMovieName());
 		//producer.sendMessage(movie.getMovieName());
+		
+		//Should only be accessed by admin
+		
+		ForAdmin();
+		
 		
 		movie.setSeatsAvailable(100);
 		movie.setBookedSeats(0);
@@ -67,9 +77,33 @@ public class MovieController {
 		return new ResponseEntity<String>("No Movie", HttpStatus.NO_CONTENT);
 	}
 	
+	public void ForAdmin() throws Exception {
+		String sessionUserType =  sessionService.checkSessionUserType();
+		
+		System.out.println("LoggedSessionUserType is : " + sessionUserType);
+		
+		if(!sessionUserType.equals("admin")) {
+			System.out.println("Oops !! This method is only for admin!!");
+			throw new Exception("This Method is only reserved for admin usertype!!");
+		}
+	}
+	
+	public void ForUser() throws Exception {
+		String sessionUserType =  sessionService.checkSessionUserType();
+		
+		System.out.println("LoggedSessionUserType is : " + sessionUserType);
+		
+		if(!sessionUserType.equals("user")) {
+			System.out.println("Oops !! This method is only for user type!!");
+			throw new Exception("This Method is only reserved for user type users!!");
+		}
+	}
+	
 	@GetMapping("/getAllMovies")
-	public ResponseEntity<?> getMovies() 
+	public ResponseEntity<?> getMovies() throws Exception 
 	{
+		
+		ForAdmin();
 		
 		log.info("Fetching all movies");
 		List<Movie> movielist = ms.getAllMovies();
@@ -122,8 +156,10 @@ public class MovieController {
 	}
 	
 	@DeleteMapping("/admin/delete/{movieName}/{theatreName}")
-	public ResponseEntity<?> deleteMovieById(@PathVariable("movieName") String movieName, @PathVariable("theatreName") String theatreName) 
+	public ResponseEntity<?> deleteMovieById(@PathVariable("movieName") String movieName, @PathVariable("theatreName") String theatreName) throws Exception 
 	{
+		ForAdmin();
+		
 		log.info("Attempting to delete movie: {}", movieName);
 		int mid = mr.findMovie(movieName, theatreName).getMovieId();
 		if(ts.deleteTicket(mid) & ms.deleteMovie(movieName, theatreName))
@@ -136,8 +172,11 @@ public class MovieController {
 	}
 	
 	@PutMapping("/admin/updateMovie/{mid}")
-	public ResponseEntity<?> updateMovie(@PathVariable("mid") int mid, @RequestBody Movie movie) 
+	public ResponseEntity<?> updateMovie(@PathVariable("mid") int mid, @RequestBody Movie movie) throws Exception 
 	{
+		
+		ForAdmin();
+		
 		log.info("Updating movie ID {} with new information", mid);
 		
 		movie.setMovieId(mid);

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.moviebookingApp.model.Movie;
 import com.moviebookingApp.model.Ticket;
 import com.moviebookingApp.service.MovieService;
+import com.moviebookingApp.service.SessionService;
 import com.moviebookingApp.service.TicketService;
 
 import org.slf4j.Logger;
@@ -35,14 +36,20 @@ public class TicketController {
 	@Autowired
 	private MovieService ms;
 	
+	@Autowired
+	private SessionService sessionService;
+	
 //	@Autowired
 //	Producer producer;
 	
 	Logger log = LoggerFactory.getLogger(TicketController.class);
 	
 	@PostMapping("/add/{movieId}/{seatsBooked}")
-	public ResponseEntity<?> addTicket(@PathVariable("movieId")int movieId, @PathVariable("seatsBooked")int seatsBooked)
+	public ResponseEntity<?> addTicket(@PathVariable("movieId")int movieId, @PathVariable("seatsBooked")int seatsBooked) throws Exception
 	{
+		
+		ForUser();
+		
 		log.info("Attempting to add new ticket for movie ID {} with {} seats booked", movieId, seatsBooked);
 		Movie m1 = ms.getMovieById(movieId);
 		
@@ -88,8 +95,10 @@ public class TicketController {
 	}
 	
 	@GetMapping("/admin/getAllTickets")
-	public ResponseEntity<?> getAllTickets() 
+	public ResponseEntity<?> getAllTickets() throws Exception 
 	{
+		ForAdmin();
+		
 		log.info("Fetching all tickets");
 		
 		List<Ticket> ticketList = ts.getAllTickets();
@@ -103,6 +112,28 @@ public class TicketController {
 		}
 		return new ResponseEntity<String>("Ticket list is Empty", HttpStatus.NO_CONTENT);
 		
+	}
+	
+	public void ForAdmin() throws Exception {
+		String sessionUserType =  sessionService.checkSessionUserType();
+		
+		System.out.println("LoggedSessionUserType is : " + sessionUserType);
+		
+		if(!sessionUserType.equals("admin")) {
+			System.out.println("Oops !! This method is only for admin!!");
+			throw new Exception("This Method is only reserved for admin usertype!!");
+		}
+	}
+	
+	public void ForUser() throws Exception {
+		String sessionUserType =  sessionService.checkSessionUserType();
+		
+		System.out.println("LoggedSessionUserType is : " + sessionUserType);
+		
+		if(!sessionUserType.equals("user")) {
+			System.out.println("Oops !! This method is only for user type!!");
+			throw new Exception("This Method is only reserved for user type users!!");
+		}
 	}
 
 }

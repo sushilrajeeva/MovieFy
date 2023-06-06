@@ -18,7 +18,11 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.moviebookingApp.model.JwtResponse;
+import com.moviebookingApp.model.Session;
+import com.moviebookingApp.model.SessionDTO;
 import com.moviebookingApp.model.UserDTO;
+import com.moviebookingApp.repository.SessionRepository;
+import com.moviebookingApp.service.SessionService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +32,21 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("call/consumer")
 public class ConsumerController {
 	Logger log = LoggerFactory.getLogger(ConsumerController.class);
+	
+	@Autowired
+	private SessionService sessionService;
+	
+	@Autowired
+	private SessionRepository sessionRepository;
+	
 	@PostMapping(value = "/authenticate")
 	public ResponseEntity<?> consumeLogin(@RequestBody UserDTO userdto) throws RestClientException, Exception {
 		
 		log.info("Consumer called for user: {}", userdto.getUserName());
 //		@Autowired
 //		private JwtController Jwt;
+		
+		
 		
 		String baseUrl = "http://localhost:9091/authenticate";
 
@@ -46,15 +59,40 @@ public class ConsumerController {
 			result = restTemplate.exchange(baseUrl, HttpMethod.POST, getHeaders(userdto),
 					new ParameterizedTypeReference<JwtResponse>() {
 					});
+			
+			SessionDTO session = new SessionDTO();
+			session.setUserName(userdto.getUserName());
+			if(userdto.getUserName().equals("admin123")) {
+				session.setUserType("admin");
+			}else {
+				session.setUserType("user");
+			}
+			
+			sessionService.addSession(session);
+			
 		} catch (Exception e) {
 			log.error("Exception occurred during login for user: {}, {}", userdto.getUserName(), e.getMessage());
 			return new ResponseEntity<String>("Login was not successful", HttpStatus.UNAUTHORIZED);
 
 		}
+		
 		log.info("Login was successful for user: {}", userdto.getUserName());
 		return new ResponseEntity<JwtResponse>(result.getBody(), HttpStatus.OK);
 
 	}
+	
+	@PostMapping(value = "/logout")
+	public ResponseEntity<?> logout() {
+	    // Your logout logic here
+
+	    // Return a response. This can be a simple success message, a status code, or some data.
+	    // The following line returns a success message and a 200 OK status code.
+		
+		sessionRepository.deleteAll();
+		
+	    return new ResponseEntity<>("Logged out successfully", HttpStatus.OK);
+	}
+
 
 	private static HttpEntity<UserDTO> getHeaders(UserDTO userdto) {
 		

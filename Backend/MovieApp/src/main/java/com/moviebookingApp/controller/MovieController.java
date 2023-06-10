@@ -31,9 +31,10 @@ import com.moviebookingApp.service.TicketService;
 
 //import com.moviebookingapp.kafka.Producer;
 
-@CrossOrigin(origins = "http://localhost:4200")
+
 @RestController
 @RequestMapping("/api/v1.0")
+@CrossOrigin(origins = "http://localhost:61495")
 
 public class MovieController {
 	

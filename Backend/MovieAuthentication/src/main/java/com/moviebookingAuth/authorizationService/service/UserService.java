@@ -14,129 +14,119 @@ import com.moviebookingAuth.authorizationService.model.User;
 import com.moviebookingAuth.authorizationService.repository.RoleDao;
 import com.moviebookingAuth.authorizationService.repository.UserDao;
 
-
-
 @Service
 public class UserService {
 	@Autowired
 	private UserDao userdao;
-	
+
 	@Autowired
 	private RoleDao roleDao;
-	
+
 	@Autowired
-    private PasswordEncoder passwordEncoder;
-  
-	 
-	
+	private PasswordEncoder passwordEncoder;
+
 	public void initRolesAndUser() {
-		Role adminRole=new Role();
+		Role adminRole = new Role();
 		adminRole.setRoleName("Admin");
 		adminRole.setRoleDesc("Admin Role");
 		roleDao.save(adminRole);
-		
-		Role userRole=new Role();
+
+		Role userRole = new Role();
 		userRole.setRoleName("User");
 		userRole.setRoleDesc("Default Role for user");
 		roleDao.save(userRole);
-		
-		User adminUser=new User();
+
+		User adminUser = new User();
 		adminUser.setFullName("admin");
 		adminUser.setUserName("admin123");
 		adminUser.setEmail("admin@gmail.com");
 		adminUser.setUserPassword(getEncodedPassword("admin@pass"));
-		Set<Role> adminRoles=new HashSet<>();
+		Set<Role> adminRoles = new HashSet<>();
 		adminUser.setSecretQuestion("What is your nickname");
 		adminUser.setSecretAnswer("admin");
 		adminRoles.add(adminRole);
 		adminUser.setRole(adminRoles);
 		userdao.save(adminUser);
-		
-	User user=new User();
-	user.setFullName("Vishal");
-	user.setUserName("vishalsb1");
-	user.setEmail("vishal@gmail.com");
-	user.setUserPassword(getEncodedPassword("vish@123"));
-	Set<Role> userRoles=new HashSet<>();
-	userRoles.add(userRole);
-	user.setRole(userRoles);
-	user.setSecretQuestion("What is your nickname");
-	user.setSecretAnswer("Vishu");
-	
-	userdao.save(user);
+
+		User user = new User();
+		user.setFullName("Vishal");
+		user.setUserName("vishalsb1");
+		user.setEmail("vishal@gmail.com");
+		user.setUserPassword(getEncodedPassword("vish@123"));
+		Set<Role> userRoles = new HashSet<>();
+		userRoles.add(userRole);
+		user.setRole(userRoles);
+		user.setSecretQuestion("What is your nickname");
+		user.setSecretAnswer("Vishu");
+
+		userdao.save(user);
 //	
-		
-		
-		
+
 	}
+
 	public HttpStatus registerNewUser(User user) {
-        Role role = roleDao.findById("User").get();
-        Set<Role> userRoles = new HashSet<>();
-        userRoles.add(role);
-        user.setRole(userRoles);
-        user.setUserPassword(getEncodedPassword(user.getUserPassword()));
-        User savedUser =  userdao.save(user);
-        
-        if(savedUser!=null) {
-        	return HttpStatus.OK;
-        }
-       
-        return HttpStatus.BAD_REQUEST;
+		Role role = roleDao.findById("User").get();
+		Set<Role> userRoles = new HashSet<>();
+		userRoles.add(role);
+		user.setRole(userRoles);
+		user.setUserPassword(getEncodedPassword(user.getUserPassword()));
+		User savedUser = userdao.save(user);
 
-       
-    }
-	
-	public String userNameValidator(String email, String password) {
-	    User user = userdao.findUserByEmail(email);
-	    
-	    if(user != null) {
-	        if(passwordEncoder.matches(password, user.getUserPassword())) {
-	            System.out.println("Passwords Matched!!");
-	            return user.getUserName();
-	        } else {
-	            System.out.println("Password didn't match!!");
-	        }
-	    } else {
-	        System.out.println("No user found!!");
-	    }
+		if (savedUser != null) {
+			return HttpStatus.OK;
+		}
 
-	    return null;
+		return HttpStatus.BAD_REQUEST;
+
 	}
-	
+
+	public String userNameValidator(String email, String password) {
+		User user = userdao.findUserByEmail(email);
+
+		if (user != null) {
+			if (passwordEncoder.matches(password, user.getUserPassword())) {
+				System.out.println("Passwords Matched!!");
+				return user.getUserName();
+			} else {
+				System.out.println("Password didn't match!!");
+			}
+		} else {
+			System.out.println("No user found!!");
+		}
+
+		return null;
+	}
+
 	public HttpStatus updateUserPassword(ForgetPassword forgetPassword) {
-		
+
 		User user = userdao.findByUserName(forgetPassword.getUserName());
-		
-		if(user != null) {
-			if(user.getSecretQuestion().equals(forgetPassword.getSecretQuestion())) {
-				if(user.getSecretAnswer().equals(forgetPassword.getSecretAnswer())) {
+
+		if (user != null) {
+			if (user.getSecretQuestion().equals(forgetPassword.getSecretQuestion())) {
+				if (user.getSecretAnswer().equals(forgetPassword.getSecretAnswer())) {
 					user.setUserPassword(getEncodedPassword(forgetPassword.getNewPassword()));
 					userdao.save(user);
 					System.out.println("Password Updated!!");
 					return HttpStatus.ACCEPTED;
-				}else {
+				} else {
 					System.out.println("Secret Answers didn't match!!");
 				}
-			}else {
+			} else {
 				System.out.println("Secret Questions didn't match!!");
 			}
-		}else {
+		} else {
 			System.out.println("User not found with the given userName");
 		}
-		
-	
-		
+
 		return HttpStatus.NOT_MODIFIED;
 	}
 
-	
 	public String getEncodedPassword(String password) {
-        return passwordEncoder.encode(password);
-    }
-	
+		return passwordEncoder.encode(password);
+	}
+
 	public boolean isPasswordValid(String rawPassword, String hashedPassword) {
-	    return passwordEncoder.matches(rawPassword, hashedPassword);
+		return passwordEncoder.matches(rawPassword, hashedPassword);
 	}
 
 }
-

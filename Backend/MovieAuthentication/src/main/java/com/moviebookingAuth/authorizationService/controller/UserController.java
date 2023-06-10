@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import com.moviebookingAuth.authorizationService.model.User;
 import com.moviebookingAuth.authorizationService.service.UserService;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:61495")
 public class UserController {
 	@Autowired
 	private UserService userService;
@@ -49,6 +51,7 @@ public class UserController {
 	}
 	
 	@GetMapping({"/username/forget/{email}/{password}"})
+	
 	public String forgotUsername(@PathVariable("email") String email, @PathVariable("password") String password) {
       
 		System.out.println("Forgot user name controller method is called");

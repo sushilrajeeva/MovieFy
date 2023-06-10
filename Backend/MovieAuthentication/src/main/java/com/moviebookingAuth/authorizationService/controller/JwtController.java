@@ -11,7 +11,7 @@ import com.moviebookingAuth.authorizationService.model.User;
 import com.moviebookingAuth.authorizationService.service.JwtService;
 
 @org.springframework.web.bind.annotation.RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:61495")
 //@RequestMapping("api/v1.0")
 public class JwtController {
 	@Autowired

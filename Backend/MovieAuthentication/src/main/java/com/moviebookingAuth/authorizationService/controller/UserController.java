@@ -25,7 +25,7 @@ import com.moviebookingAuth.authorizationService.model.User;
 import com.moviebookingAuth.authorizationService.service.UserService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:61495")
+@CrossOrigin(origins = "http://localhost:55053")
 public class UserController {
 	@Autowired
 	private UserService userService;

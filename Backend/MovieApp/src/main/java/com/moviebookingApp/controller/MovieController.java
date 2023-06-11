@@ -34,7 +34,7 @@ import com.moviebookingApp.service.TicketService;
 
 @RestController
 @RequestMapping("/api/v1.0")
-@CrossOrigin(origins = "http://localhost:61495")
+@CrossOrigin(origins = "http://localhost:3000")
 
 public class MovieController {
 	
@@ -62,6 +62,8 @@ public class MovieController {
 		
 		//Should only be accessed by admin
 		
+		
+		
 		ForAdmin();
 		
 		
@@ -83,6 +85,7 @@ public class MovieController {
 	@GetMapping("/getAllMovies")
 	public ResponseEntity<?> getMovies() throws Exception 
 	{
+		System.out.println("Get all movies is called");
 		
 		ForAdmin();
 		

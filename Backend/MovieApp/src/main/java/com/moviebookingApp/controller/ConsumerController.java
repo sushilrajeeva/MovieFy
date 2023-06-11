@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("call/consumer")
-@CrossOrigin(origins = "http://localhost:55053")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ConsumerController {
 	Logger log = LoggerFactory.getLogger(ConsumerController.class);
 	
@@ -47,19 +47,23 @@ public class ConsumerController {
 //		@Autowired
 //		private JwtController Jwt;
 		
-		
+		System.out.println("Consumer called for user: {}" +userdto.getUserName());
 		
 		String baseUrl = "http://localhost:9091/authenticate";
 
 		RestTemplate restTemplate = new RestTemplate();
 		
-
+		
 		ResponseEntity<JwtResponse> result = null;
+		JwtResponse jwt = new JwtResponse();
 		try {
 			log.info("Sending login request for user: {}", userdto.getUserName());
 			result = restTemplate.exchange(baseUrl, HttpMethod.POST, getHeaders(userdto),
 					new ParameterizedTypeReference<JwtResponse>() {
 					});
+			System.out.println("Result" +result);
+
+			System.out.println("Am i Getting JwtToken : " +jwt.getJwtToken());
 			
 			SessionDTO session = new SessionDTO();
 			session.setUserName(userdto.getUserName());
@@ -104,7 +108,7 @@ public class ConsumerController {
 
 		header.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
 		header.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-		System.out.println("Did i execute");
+		System.out.println("Did i execute" +header);
 		return new HttpEntity<UserDTO>(userdto, header);
 	}
 

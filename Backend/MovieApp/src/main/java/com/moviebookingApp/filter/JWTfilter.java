@@ -23,12 +23,13 @@ public class JWTfilter extends GenericFilterBean {
 		@SuppressWarnings("unused")
 		HttpServletResponse httpRes = (HttpServletResponse) response;
 
-		String authHeader = httpReq.getHeader("authorization");
+		String authHeader = httpReq.getHeader("Authorization");
 		String requestURI = httpReq.getRequestURI();
 		
 		// Skip the authentication check for the login route
 		// Skip the authentication check for the authenticate route
 		System.out.println("Checking uri -> " + requestURI);
+		System.out.println("Auth Header : " + authHeader);
 		if (requestURI.endsWith("/api/v1.0/authenticate")) {
 		    chain.doFilter(request, response);
 		    return;
@@ -39,11 +40,11 @@ public class JWTfilter extends GenericFilterBean {
 		    return;
 		}
 
-		if (authHeader == null || !authHeader.startsWith("Bearer")) {
+		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
 			throw new ServletException("Missing or invalid authentication header");
 		}
 		
-		System.out.println("Auth Header : " + authHeader);
+		
 		
 
 		String jwtToken = authHeader.substring(7);

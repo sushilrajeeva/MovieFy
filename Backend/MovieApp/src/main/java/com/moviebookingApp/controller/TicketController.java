@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 //import com.moviebookingapp.kafka.Producer;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("api/v1.0/ticket")
 public class TicketController {

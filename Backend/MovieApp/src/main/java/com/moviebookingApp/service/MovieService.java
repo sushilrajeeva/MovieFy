@@ -21,5 +21,4 @@ public interface MovieService {
 	public List<Movie> getMovieByName(String name);
 	
 	//public List<Movie> searchByMovieName(String str) throws MovieNotAvailableException;
-
 }

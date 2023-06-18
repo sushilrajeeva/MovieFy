@@ -1,4 +1,5 @@
-package com.moviebookingAuth.authorizationService.configuration;
+package com.moviebookingApp.config;
+
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ public class CorsConfiguration {
 	private static final String OPTIONS="OPTIONS";
 	
 	
+		
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 	    return new WebMvcConfigurer() {

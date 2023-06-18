@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class JwtResponse {
 	private UserDTO user;
     private String jwtToken;
-    
+    private Boolean isValid;
     public JwtResponse() {}
 
     @JsonCreator
@@ -31,4 +31,13 @@ public class JwtResponse {
     public void setJwtToken(String jwtToken) {
         this.jwtToken = jwtToken;
     }
+
+	public Boolean getIsValid() {
+		return isValid;
+	}
+
+	public void setIsValid(Boolean isValid) {
+		this.isValid = isValid;
+	}
+    
 }

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.moviebookingApp.exceptions.DuplicateMovieIdExceptions;
@@ -34,7 +35,8 @@ import com.moviebookingApp.service.TicketService;
 
 @RestController
 @RequestMapping("/api/v1.0")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
+
 
 public class MovieController {
 	
@@ -60,10 +62,6 @@ public class MovieController {
 		log.info("Attempting to add new movie: {}", movie.getMovieName());
 		//producer.sendMessage(movie.getMovieName());
 		
-		//Should only be accessed by admin
-		
-		
-		
 		ForAdmin();
 		
 		
@@ -87,11 +85,12 @@ public class MovieController {
 	{
 		System.out.println("Get all movies is called");
 		
-		ForAdmin();
+		//ForAdmin();
 		
 		log.info("Fetching all movies");
 		List<Movie> movielist = ms.getAllMovies();
 		log.info("Fetched {} movies", movielist != null ? movielist.size() : 0);
+		
 		if(movielist!=null)
 		{
 			for(Movie m: movielist)

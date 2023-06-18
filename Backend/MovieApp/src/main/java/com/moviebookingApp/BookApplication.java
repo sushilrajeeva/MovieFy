@@ -18,13 +18,13 @@ import com.moviebookingApp.filter.JWTfilter;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class BookApplication {
 	
-	@Bean
-	public FilterRegistrationBean jwtFilter() {
-		FilterRegistrationBean fb = new FilterRegistrationBean();
-		fb.setFilter(new JWTfilter());
-		fb.addUrlPatterns("/api/v1.0/*");
-		return fb;
-	}
+//	@Bean
+//	public FilterRegistrationBean jwtFilter() {
+//		FilterRegistrationBean fb = new FilterRegistrationBean();
+//		fb.setFilter(new JWTfilter());
+//		fb.addUrlPatterns("/api/v1.0/*");
+//		return fb;
+//	}
 
 
 	public static void main(String[] args) {

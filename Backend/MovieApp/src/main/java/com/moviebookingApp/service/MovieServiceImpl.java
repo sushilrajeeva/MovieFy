@@ -116,22 +116,4 @@ public class MovieServiceImpl implements MovieService {
 	    }
 	    return movies;
 	}
-
-
-//	@Override
-//	public List<Movie> searchByMovieName(String str) throws MovieNotAvailableException {
-//		log.info("searching movie by name");
-//		List<Movie> movies = movieRepo.searchByMovieName(str);
-//		if(movies.size()==0) {
-//			log.error("no movie found with "+str+" name");
-//			throw new MovieNotAvailableException("Searched movie is not available");
-//			
-//		}
-//		log.info("movie found with "+str+" name");
-//		return movies;
-//	}
-
-	
-	
-
 }

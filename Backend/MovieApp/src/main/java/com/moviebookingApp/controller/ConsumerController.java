@@ -11,13 +11,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.moviebookingApp.model.JwtRequest;
 import com.moviebookingApp.model.JwtResponse;
 import com.moviebookingApp.model.SessionDTO;
 import com.moviebookingApp.model.UserDTO;
@@ -30,7 +34,8 @@ import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("call/consumer")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
+
 public class ConsumerController {
 	Logger log = LoggerFactory.getLogger(ConsumerController.class);
 	
@@ -41,7 +46,7 @@ public class ConsumerController {
 	private SessionRepository sessionRepository;
 	
 	@PostMapping(value = "/authenticate")
-	public ResponseEntity<?> consumeLogin(@RequestBody UserDTO userdto) throws RestClientException, Exception {
+	public ResponseEntity<JwtResponse> consumeLogin(@RequestBody JwtRequest userdto) throws RestClientException, Exception {
 		
 		log.info("Consumer called for user: {}", userdto.getUserName());
 //		@Autowired
@@ -77,14 +82,18 @@ public class ConsumerController {
 			
 		} catch (Exception e) {
 			log.error("Exception occurred during login for user: {}, {}", userdto.getUserName(), e.getMessage());
-			return new ResponseEntity<String>("Login was not successful", HttpStatus.UNAUTHORIZED);
+			//return new ResponseEntity<String>("Login was not successful", HttpStatus.UNAUTHORIZED);
+			
 
 		}
 		
 		log.info("Login was successful for user: {}", userdto.getUserName());
+		System.out.println("response "+jwt.getJwtToken());
 		return new ResponseEntity<JwtResponse>(result.getBody(), HttpStatus.OK);
 
 	}
+	
+	
 	
 	@PostMapping(value = "/logout")
 	public ResponseEntity<?> logout() {
@@ -93,13 +102,14 @@ public class ConsumerController {
 	    // Return a response. This can be a simple success message, a status code, or some data.
 	    // The following line returns a success message and a 200 OK status code.
 		
+		System.out.println("Logout is called");
 		sessionRepository.deleteAll();
 		
 	    return new ResponseEntity<>("Logged out successfully", HttpStatus.OK);
 	}
 
 
-	private static HttpEntity<UserDTO> getHeaders(UserDTO userdto) {
+	private static HttpEntity<JwtRequest> getHeaders(JwtRequest userdto) {
 		
 		
 		HttpHeaders header = new HttpHeaders();
@@ -108,8 +118,9 @@ public class ConsumerController {
 
 		header.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
 		header.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+		header.set("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjEyMyIsImV4cCI6MTY4NjUyMzY3NiwiaWF0IjoxNjg2NTA1Njc2fQ.imll9Q6hhqxBCQ2SMDcv7PIGi461MDgcf6IAJScUsOfyE-zCxEi2WfkLoRcFGmojk3QZLUhsvMcxEoSly4-jvw");
 		System.out.println("Did i execute" +header);
-		return new HttpEntity<UserDTO>(userdto, header);
+		return new HttpEntity<JwtRequest>(userdto, header);
 	}
 
 }

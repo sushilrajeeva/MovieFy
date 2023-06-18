@@ -13,6 +13,7 @@ public List<Ticket> getAllTickets(int mid);
 	public boolean addTicket(Ticket ticket);
 	public boolean deleteTicket(int mid);
 	public List<Ticket> getAllTickets();
+	public List<Ticket> getAllUserTickets(String userName);
 
 
 }

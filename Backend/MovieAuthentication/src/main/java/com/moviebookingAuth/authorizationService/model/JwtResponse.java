@@ -4,6 +4,7 @@ package com.moviebookingAuth.authorizationService.model;
 public class JwtResponse {
 	private UserDTO user;
     private String jwtToken;
+    private Boolean isValid;
 
     public JwtResponse(UserDTO user, String jwtToken) {
         this.user = user;
@@ -25,4 +26,20 @@ public class JwtResponse {
     public void setJwtToken(String jwtToken) {
         this.jwtToken = jwtToken;
     }
+
+    
+	public Boolean getIsValid() {
+		return isValid;
+	}
+
+	public void setIsValid(Boolean isValid) {
+		this.isValid = isValid;
+	}
+
+	public JwtResponse() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+    
+    
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.moviebookingApp.model.Movie;
@@ -25,7 +26,8 @@ import org.slf4j.LoggerFactory;
 
 //import com.moviebookingapp.kafka.Producer;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
+
 @RestController
 @RequestMapping("api/v1.0/ticket")
 public class TicketController {
@@ -44,8 +46,8 @@ public class TicketController {
 	
 	Logger log = LoggerFactory.getLogger(TicketController.class);
 	
-	@PostMapping("/add/{movieId}/{seatsBooked}")
-	public ResponseEntity<?> addTicket(@PathVariable("movieId")int movieId, @PathVariable("seatsBooked")int seatsBooked) throws Exception
+	@PostMapping("/add/{movieId}/{seatsBooked}/{userName}")
+	public ResponseEntity<?> addTicket(@PathVariable("movieId")int movieId, @PathVariable("seatsBooked")int seatsBooked, @PathVariable("userName")String userName) throws Exception
 	{
 		
 		ForUser();
@@ -61,6 +63,7 @@ public class TicketController {
 			ticket.setMovie_id_fk(m1.getMovieId());
 			ticket.setMovieName(m1.getMovieName());
 			ticket.setTotalSeat(100);
+			ticket.setUserName(userName);
 			
 			int seatsAvailable = m1.getSeatsAvailable();
 			
@@ -102,6 +105,26 @@ public class TicketController {
 		log.info("Fetching all tickets");
 		
 		List<Ticket> ticketList = ts.getAllTickets();
+		
+		log.info("Fetched {} tickets", ticketList != null ? ticketList.size() : 0);
+		if(ticketList!=null && !ticketList.isEmpty())
+		{
+			
+
+			return new ResponseEntity<List<Ticket>>(ticketList, HttpStatus.OK);
+		}
+		return new ResponseEntity<String>("Ticket list is Empty", HttpStatus.NO_CONTENT);
+		
+	}
+	
+	@GetMapping("/user/getAllTickets/{userName}")
+	public ResponseEntity<?> getAllUserTickets(@PathVariable("userName")String userName) throws Exception 
+	{
+		ForUser();
+		
+		log.info("Controller -> Fetching all tickets for given username");
+		
+		List<Ticket> ticketList = ts.getAllUserTickets(userName);
 		
 		log.info("Fetched {} tickets", ticketList != null ? ticketList.size() : 0);
 		if(ticketList!=null && !ticketList.isEmpty())

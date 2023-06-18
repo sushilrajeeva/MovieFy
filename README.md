@@ -29,10 +29,11 @@ API's
 }
 
 7. http://localhost:8082/api/v1.0/ticket/admin/getAllTickets
+8. http://localhost:8082/api/v1.0/ticket/user/getAllTickets/{userName}
 
-8. http://localhost:8082/api/v1.0/ticket/add/6/35
+9. http://localhost:8082/api/v1.0/ticket/add/6/35/{userName}
 
-9. http://localhost:9091/registerNewUser
+10. http://localhost:9091/registerNewUser
 
 {
 "userName": "sushilrajeev",
@@ -66,3 +67,4 @@ API's
 }
 
 12. http://localhost:9091/username/forget/{email}/{password}
+
